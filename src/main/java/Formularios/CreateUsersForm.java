@@ -41,10 +41,26 @@ public class CreateUsersForm extends javax.swing.JFrame {
     public CreateUsersForm() {
         initComponents();
         this.setLocationRelativeTo(null);         
+            Menu m1= new Menu();
+            Login l1=new Login();
             
         if (archivo.length() == 0 && archivo2.length() == 0) {                
             admin_rdb.setSelected(true);
             user_rdb.setSelected(false);
+            admin_rdb.setEnabled(false);
+            user_rdb.setEnabled(false);
+        }
+        else if(m1.ValAdm==1)
+        {
+            admin_rdb.setSelected(false);
+            user_rdb.setSelected(true);
+            admin_rdb.setEnabled(false);
+            user_rdb.setEnabled(false);
+        }
+        else if(l1.ValAdm2==2)
+        {
+            admin_rdb.setSelected(false);
+            user_rdb.setSelected(true);
             admin_rdb.setEnabled(false);
             user_rdb.setEnabled(false);
         }
