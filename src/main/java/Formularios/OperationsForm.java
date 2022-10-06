@@ -13,6 +13,7 @@ import javax.swing.JFileChooser;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
@@ -27,6 +28,9 @@ public class OperationsForm extends javax.swing.JFrame {
     /**
      * Creates new form OperationsForm
      */
+    
+    String user;
+    String current;
     public OperationsForm() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -131,6 +135,11 @@ public class OperationsForm extends javax.swing.JFrame {
         delete_btn.setForeground(new java.awt.Color(153, 153, 153));
         delete_btn.setText("Eliminar");
         delete_btn.setEnabled(false);
+        delete_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delete_btnActionPerformed(evt);
+            }
+        });
 
         jButton1.setBackground(new java.awt.Color(102, 102, 102));
         jButton1.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
@@ -219,6 +228,7 @@ public class OperationsForm extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Usuario");
 
+        admin_rdb.setBackground(new java.awt.Color(51, 51, 51));
         admin_rdb.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
         admin_rdb.setForeground(new java.awt.Color(255, 255, 255));
         admin_rdb.setText("Administrador");
@@ -260,6 +270,7 @@ public class OperationsForm extends javax.swing.JFrame {
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Teléfono");
 
+        user_rdb.setBackground(new java.awt.Color(51, 51, 51));
         user_rdb.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
         user_rdb.setForeground(new java.awt.Color(255, 255, 255));
         user_rdb.setText("Usuario");
@@ -468,10 +479,10 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
     }
     
     public boolean invalidChars(){//Verifica que no se ingrese el delimitador
-        return user_txt.getText().contains(";") || name_txt.getText().contains(";") ||
-                lastname_txt.getText().contains(";") || password_txt.getText().contains(";") ||
-                phone_txt.getText().contains(";") || mail_txt.getText().contains(";") ||
-                fotoPath_txt.getText().contains(";") || date_txt.getText().contains(";");
+        return user_txt.getText().contains("|") || name_txt.getText().contains("|") ||
+                lastname_txt.getText().contains("|") || password_txt.getText().contains("|") ||
+                phone_txt.getText().contains("|") || mail_txt.getText().contains("|") ||
+                fotoPath_txt.getText().contains("|") || date_txt.getText().contains("|");
     }
     
     public String searchUser(String Name)
@@ -615,7 +626,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             return;
         }
         if (invalidChars()) {
-            JOptionPane.showMessageDialog(null, "No se puede ingresar el caracter ';' ", "Ingreso no válido", WIDTH);
+            JOptionPane.showMessageDialog(null, "No se puede ingresar el caracter '|' ", "Ingreso no válido", WIDTH);
             return;
         }
         try {
@@ -640,8 +651,16 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
                 JOptionPane.showMessageDialog(null, "Formato de teléfono incorrecto", "Ingreso no válido", WIDTH);
                 return;
             }
-
+            if (admin_rdb.isSelected()) {
+                rol = 1;
+            }
             //Comienza la escritura de datos
+            if (!user.isBlank()) {
+                AESencripter encriptador = new AESencripter();
+                String contraseñaCifrada = encriptador.encriptar(password, usuario);
+                String Informacion = String.join("|", usuario,nombre,apellido,contraseñaCifrada,fecha,correo,path_fotografia,telefono + "",rol + "","1");
+                modify(user,Informacion);
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Se produjo el siguiente error al tratar de ingresar los datos " + e.getMessage(), "Error", WIDTH);
@@ -649,6 +668,123 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
 
     }//GEN-LAST:event_modify_btnActionPerformed
 
+    public void modify(String buscar, String datoModificado) {                
+        try {
+            if (modifyInFile("C:\\MEIA\\bitacora_usuario.txt", buscar, datoModificado)) {
+                return;
+            }else if(modifyInFile("C:\\MEIA\\usuario.txt", buscar, datoModificado)){
+                return;
+            }else{
+                JOptionPane.showMessageDialog(null, "No se pudo modificar el dato", "Error", WIDTH);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", WIDTH);
+        }
+                        
+    }
+    
+    public boolean modifyInFile(String Path, String buscar,String datoModificado) throws FileNotFoundException, IOException{
+        boolean flag = false;
+        File archivo = new File(Path);
+        FileWriter Escribir;
+        FileReader LecturaArchivo;
+        BufferedReader LeerArchivo;               
+        StringBuilder buffer = new StringBuilder();
+        String content = "";
+        LecturaArchivo = new FileReader(archivo);
+        LeerArchivo = new BufferedReader(LecturaArchivo);
+        String Linea = LeerArchivo.readLine();
+        String[] newUser = datoModificado.split("[|]");
+        
+        while (Linea != null) {            
+            String[] user = Linea.split("[|]");
+            if (user[0].equals(buscar) && user[9].equals("1")) {//Se verifica que el dato ingresado coincida con el usuario y que este siga activo
+                if (!user[0].equals(newUser[0])) {//Las llaves primarias son distintas, por lo que se borra el original y se inserta el otro
+                    user[9] = "0";//Se cambia el status del original
+                    String replace = String.join("|", user);
+                    buffer.append(replace).append(System.lineSeparator());
+                    //Se inserta el nuevo
+                    buffer.append(datoModificado).append(System.lineSeparator());
+                    //Se modifica el descriptor, se aumenta la cantidad de registros
+                }else{ //Son iguales, simplemente se reemplaza
+                    buffer.append(datoModificado).append(System.lineSeparator());
+                    //La cantidad de registros se mantiene constante
+                }                
+                flag = true; //Se encontro el dato                
+            }else{
+                buffer.append(Linea).append(System.lineSeparator());   
+            }                
+            Linea = LeerArchivo.readLine();
+        }
+        
+        LecturaArchivo.close();
+        LeerArchivo.close();                        
+
+        if (flag) { //Se encontro el dato en el archivo?
+            //Se llena el archivo con el user dato
+            content = buffer.toString();
+            Escribir = new FileWriter(archivo);
+            Escribir.write(content);
+            Escribir.close();
+            return true;
+        }
+        return false;
+    }
+    
+    public void delete(String datoEliminar){        
+        try {
+            if (deleteInFile("C:\\MEIA\\bitacora_usuario.txt", datoEliminar)) {
+                return;
+            }else if(deleteInFile("C:\\MEIA\\usuario.txt", datoEliminar)){
+                return;
+            }else{
+                JOptionPane.showMessageDialog(null, "No se pudo eliminar el dato", "Error", WIDTH);
+            }
+            
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", WIDTH);
+        }
+    }
+    
+    public boolean deleteInFile(String Path, String datoEliminar) throws FileNotFoundException, IOException{
+        boolean flag = false;
+        File archivo = new File(Path);
+        FileWriter Escribir;
+        FileReader LecturaArchivo;
+        BufferedReader LeerArchivo;               
+        StringBuilder buffer = new StringBuilder();
+        String content = "";
+        LecturaArchivo = new FileReader(archivo);
+        LeerArchivo = new BufferedReader(LecturaArchivo);
+        String Linea = LeerArchivo.readLine();
+            
+        while(Linea != null){
+            String[] user = Linea.split("[|]");
+            if (user[0].equals(datoEliminar) && user[9].equals("1")) {//Se verifica que el dato ingresado coincida con el usuario y que este siga activo
+                user[9] = "0";
+                String replace = String.join("|", user);
+                buffer.append(replace).append(System.lineSeparator());
+                flag = true; //Se encontro el dato
+                //Se debe modificar el descriptor, disminuir la cantidad de registros activos
+            }else{
+                buffer.append(Linea).append(System.lineSeparator());   
+            }                
+            Linea = LeerArchivo.readLine();
+        }
+        LecturaArchivo.close();
+        LeerArchivo.close();                        
+
+        if (flag) { //Se encontro el dato en la bitácora?
+            //Se llena la bitácora con el user con estatus 0
+            content = buffer.toString();
+            Escribir = new FileWriter(archivo);
+            Escribir.write(content);
+            Escribir.close();
+            return true;
+        }
+        return false;
+    }
+    
     private void mail_txtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mail_txtKeyTyped
         // TODO add your handling code here:
         if (mail_txt.getText().length() >= 40) {
@@ -728,6 +864,16 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
         }
         else
         {
+            foto_btn.setEnabled(true);
+            modify_btn.setEnabled(true);
+            delete_btn.setEnabled(true);
+            user_txt.setEnabled(true);
+            name_txt.setEnabled(true);
+            lastname_txt.setEnabled(true);
+            password_txt.setEnabled(true);
+            date_txt.setEnabled(true);
+            mail_txt.setEnabled(true);
+            phone_txt.setEnabled(true);            
             String CTN="";
    
             String[] Line;
@@ -741,7 +887,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             }
             
             
-            
+            user = Line[0];
             user_txt.setText(Line[0]);
             name_txt.setText(Line[1]);
             lastname_txt.setText(Line[2]);
@@ -777,6 +923,22 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             
         }
     }//GEN-LAST:event_save_btnActionPerformed
+
+    private void delete_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_btnActionPerformed
+        // TODO add your handling code here:
+        if (!user.isBlank()) {
+            delete(user);
+            user = "";
+            user_txt.setText("");
+            name_txt.setText("");
+            lastname_txt.setText("");
+            password_txt.setText("");
+            date_txt.setText("");
+            mail_txt.setText("");
+            phone_txt.setText("");
+            fotoPath_txt.setText("");
+        }
+    }//GEN-LAST:event_delete_btnActionPerformed
 
     /**
      * @param args the command line arguments
