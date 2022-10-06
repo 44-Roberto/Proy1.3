@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
+import Funciones.AESencripter;
 
 /**
  *
@@ -628,7 +629,9 @@ public class CreateUsersForm extends javax.swing.JFrame {
             
             //Comienza la escritura de datos en bitacora
             String bitacoraUsersPath="C:\\MEIA\\bitacora_usuario.txt"; //Dirección
-            String Informacion = String.join("|", usuario,nombre,apellido,password,fecha,correo,path_fotografia,telefono + "",rol + "","1");
+            AESencripter encriptador = new AESencripter();
+            String contraseñaCifrada = encriptador.encriptar(password, usuario);
+            String Informacion = String.join("|", usuario,nombre,apellido,contraseñaCifrada,fecha,correo,path_fotografia,telefono + "",rol + "","1");
             String strError="";
             
             

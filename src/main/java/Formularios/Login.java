@@ -6,6 +6,14 @@ package Formularios;
 import java.awt.Color;
 import java.io.*;
 import javax.swing.JOptionPane;
+import Funciones.AESencripter;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 /**
  *
  * @author Roberto Moya
@@ -207,7 +215,8 @@ public class Login extends javax.swing.JFrame {
         if (JTFUser.getText().isBlank() || jPFctn.getText().isBlank()) {
             JOptionPane.showMessageDialog(null, "Se deben llenar todos los campos ", "Ingreso no válido", WIDTH);
         }
-         String contra= new String(jPFctn.getPassword());
+        String contra= new String(jPFctn.getPassword());
+        AESencripter encripter = new AESencripter();
         int CTNLong =0;
         int CAux=0;
         String Usuario="";
@@ -242,8 +251,13 @@ public class Login extends javax.swing.JFrame {
                         {
                            User=Linea.split("[|]");
                             
-                           Usuario=User[0];
-                           CTN=User[3];
+                           Usuario=User[0];     
+                           String contCifrada = User[3];
+                            try {
+                                CTN = encripter.desencriptar(contCifrada, Usuario);
+                            } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ex) {
+                                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                            FotoPath=User[7];
                            rol = Integer.parseInt(User[8]);
                            if(JTFUser.getText().equals(Usuario))
@@ -271,7 +285,12 @@ public class Login extends javax.swing.JFrame {
                         if (!"".equals(Linea2)) {
                             User2 = Linea2.split("[|]");
                             Usuario=User2[0];
-                            CTN=User2[3];
+                            String contCifrada = User2[3];
+                            try {
+                                CTN = encripter.desencriptar(contCifrada, Usuario);
+                            } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ex) {
+                                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             FotoPath=User2[7];
                             rol = Integer.parseInt(User2[8]);
                             
