@@ -13,12 +13,31 @@ import javax.swing.JFileChooser;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+
+import javax.swing.JOptionPane;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.awt.Color;
+import java.awt.Image;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.ImageIcon;
+import Funciones.AESencripter;
+
 /**
  *
  * @author AndresLima
@@ -28,6 +47,15 @@ public class OperationsForm extends javax.swing.JFrame {
     /**
      * Creates new form OperationsForm
      */
+    
+     FileInputStream input5;
+    FileOutputStream output5;
+    FileReader LecturaArchivo5;
+    BufferedReader LeerArchivo5;
+    FileWriter Escribir5;
+    BufferedWriter bw5;
+    DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    
     
     String user;
     String current;
@@ -497,7 +525,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             //String[] User;
             FileReader LecturaArchivo;
             
-            try {
+            try {//Usuario
                 LecturaArchivo = new FileReader(archivoUsuario);
                 BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo);
                 //String Linea="";
@@ -514,10 +542,12 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
                         {
                            User=Linea.split("[|]");
                             
-                           Usuario=User[0];                      
+                           Usuario=User[0]; 
+                          
                            
                           if(Name.equals(Usuario)&&User[9].trim().equals("1"))
                             {
+                                
                              return Linea;
                             
                             
@@ -529,7 +559,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
 
                     LecturaArchivo.close();
                     LeerArchivo.close();
-                                        
+                                 //Bitacora       
                     LecturaArchivo = new FileReader(archivoBitUsuario);
                     LeerArchivo = new BufferedReader(LecturaArchivo);
                     Linea = LeerArchivo.readLine();
@@ -540,7 +570,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
                             
                            Usuario=User[0];                      
                            
-                          if(Name.equals(Usuario))
+                          if(Name.equals(Usuario)&&User[9].trim().equals("1"))
                             {
                              return Linea;
                             
@@ -733,9 +763,9 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
     
     public void delete(String datoEliminar){        
         try {
-            if (deleteInFile("C:\\MEIA\\bitacora_usuario.txt", datoEliminar)) {
+            if (deleteInFile("C:\\MEIA\\bitacora_usuario.txt","C:\\MEIA\\desc_bitacora_usuario.txt", datoEliminar)) {
                 return;
-            }else if(deleteInFile("C:\\MEIA\\usuario.txt", datoEliminar)){
+            }else if(deleteInFile("C:\\MEIA\\usuario.txt","C:\\MEIA\\desc_bitacora_usuario.txt", datoEliminar)){
                 return;
             }else{
                 JOptionPane.showMessageDialog(null, "No se pudo eliminar el dato", "Error", WIDTH);
@@ -746,7 +776,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
         }
     }
     
-    public boolean deleteInFile(String Path, String datoEliminar) throws FileNotFoundException, IOException{
+    public boolean deleteInFile(String Path,String Path_desc, String datoEliminar) throws FileNotFoundException, IOException{
         boolean flag = false;
         File archivo = new File(Path);
         FileWriter Escribir;
@@ -772,7 +802,25 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             Linea = LeerArchivo.readLine();
         }
         LecturaArchivo.close();
-        LeerArchivo.close();                        
+        LeerArchivo.close();   
+        String[][] descBitacoraUser = getDescriptor("C:\\MEIA\\desc_bitacora_usuario.txt");
+        int numRegistros = Integer.parseInt(descBitacoraUser[5][1].trim());
+            int regActivos = Integer.parseInt(descBitacoraUser[6][1].trim());
+            int maxRegistros = Integer.parseInt(descBitacoraUser[8][1].trim());
+             int numRegistrosInactivos=Integer.parseInt(descBitacoraUser[7][1].trim());
+            if (numRegistros < maxRegistros) { //Se ve si la bitácora esta llena
+                
+                numRegistros++;
+                regActivos--;
+               
+                numRegistrosInactivos++;
+                String fechaMod = dtf5.format(LocalDateTime.now());
+                descBitacoraUser[3][1] = fechaMod;
+                descBitacoraUser[7][1] = numRegistrosInactivos + "";             
+                descBitacoraUser[5][1] = numRegistros + "";
+                descBitacoraUser[6][1] = regActivos + "";       
+                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
+            }
 
         if (flag) { //Se encontro el dato en la bitácora?
             //Se llena la bitácora con el user con estatus 0
@@ -783,6 +831,53 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             return true;
         }
         return false;
+        
+        
+        
+            
+    }
+    public void llenarDescriptor(String[][] descriptor, String Path){
+        String error = "";
+
+        try
+        {     
+             File Archivo = new File(Path);
+            FileWriter Escribir = new FileWriter(Archivo);
+            for (int i = 0; i < 9; i++) {
+                
+                Escribir.write(descriptor[i][0]+":"+descriptor[i][1]+System.getProperty("line.separator" ));
+               
+            }
+                 Escribir.close();
+                
+                //return true;
+        }
+        catch(IOException ex)
+        {
+            error= ex.getMessage();
+            //return false;
+        } 
+     
+    }
+    
+    
+     public String[][] getDescriptor(String ruta){
+        String[][] fileInfo = new String[9][2];
+        File archivo = new File(ruta);
+        if (archivo.exists() == true) {
+            try{
+                LecturaArchivo5 = new FileReader(archivo);
+                LeerArchivo5 = new BufferedReader(LecturaArchivo5);
+                for (int i = 0; i < 9; i++) {
+                    String[] line = LeerArchivo5.readLine().split(":");
+                    fileInfo[i][0] = line[0];
+                    fileInfo[i][1] = line[1];
+                }
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", WIDTH);
+            }
+        }
+        return fileInfo;
     }
     
     private void mail_txtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mail_txtKeyTyped
@@ -920,7 +1015,7 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
         else
         {
             //guardará en usuario lo que se haya hecho
-            
+            this.setVisible(false);
         }
     }//GEN-LAST:event_save_btnActionPerformed
 

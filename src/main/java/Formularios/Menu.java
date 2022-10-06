@@ -178,7 +178,7 @@ public class Menu extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(JBTN_logout))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(JBTN_IngresarUser)
+                        .addComponent(JBTN_IngresarUser, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(JBTN_modify)
                         .addGap(18, 18, 18)
@@ -213,7 +213,9 @@ public class Menu extends javax.swing.JFrame {
 
     private void JBTN_IngresarUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_IngresarUserActionPerformed
         // TODO add your handling code here:
-        
+        CreateUsersForm C1= new CreateUsersForm();
+        C1.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_JBTN_IngresarUserActionPerformed
 public static int ValAdm=0;
 public static int ValMod=0;
