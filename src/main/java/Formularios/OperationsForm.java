@@ -821,6 +821,22 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
                 descBitacoraUser[6][1] = regActivos + "";       
                 llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
             }
+            else
+            {
+                regActivos = Integer.parseInt(descBitacoraUser[6][1].trim());
+             maxRegistros = Integer.parseInt(descBitacoraUser[8][1].trim());
+              numRegistrosInactivos=Integer.parseInt(descBitacoraUser[7][1].trim());
+             numRegistros++;
+                regActivos--;
+               
+                numRegistrosInactivos++;
+                String fechaMod = dtf5.format(LocalDateTime.now());
+                descBitacoraUser[3][1] = fechaMod;
+                descBitacoraUser[7][1] = numRegistrosInactivos + "";             
+                descBitacoraUser[5][1] = numRegistros + "";
+                descBitacoraUser[6][1] = regActivos + "";       
+                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
+            }
 
         if (flag) { //Se encontro el dato en la bitácora?
             //Se llena la bitácora con el user con estatus 0
