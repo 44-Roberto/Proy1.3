@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Formularios;
+import static Formularios.Login.FotoPath;
+import static Formularios.Login.STR_LINE;
+import static Formularios.Login.rol;
 import javax.swing.JOptionPane;
 //import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -97,6 +100,11 @@ public class OperationsForm extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(153, 153, 153));
         jButton1.setText("Buscar usuario");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         mail_txt.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
         mail_txt.setEnabled(false);
@@ -419,6 +427,89 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
                 fotoPath_txt.getText().contains(";") || date_txt.getText().contains(";");
     }
     
+    public String searchUser(String Name)
+    {
+        
+        String Usuario="";
+        String CTN="";
+         File archivoUsuario = new File("C:\\MEIA\\usuario.txt");
+        File archivoBitUsuario = new File("C:\\MEIA\\bitacora_usuario.txt");
+        if(archivoUsuario.exists()==true)
+        {
+            //String[] User;
+            FileReader LecturaArchivo;
+            
+            try {
+                LecturaArchivo = new FileReader(archivoUsuario);
+                BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo);
+                //String Linea="";
+                
+                String Linea;
+                String[] User;
+                try {
+                    Linea=LeerArchivo.readLine();
+                    
+                    
+                    while(Linea != null)
+                    {
+                        if(!"".equals(Linea))
+                        {
+                           User=Linea.split("|");
+                            
+                           Usuario=User[0];                      
+                           
+                          if(Name.equals(Usuario))
+                            {
+                             return Linea;
+                            
+                            
+                            }              
+                                
+                        }
+                        Linea=LeerArchivo.readLine();
+                    }
+
+                    LecturaArchivo.close();
+                    LeerArchivo.close();
+                                        
+                    LecturaArchivo = new FileReader(archivoBitUsuario);
+                    LeerArchivo = new BufferedReader(LecturaArchivo);
+                    Linea = LeerArchivo.readLine();
+                    while(Linea != null){
+                        if (!"".equals(Linea)) {
+                            User=Linea.split("|");
+                             
+                            
+                           Usuario=User[0];                      
+                           
+                          if(Name.equals(Usuario))
+                            {
+                             return Linea;
+                            
+                            
+                            }              
+                                
+                        }
+                        Linea=LeerArchivo.readLine();
+                    }
+                    
+                    LecturaArchivo.close();
+                    LeerArchivo.close();
+                      
+                } catch (IOException ex) {
+                    
+                }
+            } catch (FileNotFoundException ex) {
+                
+            }            
+        }
+        else
+        {
+           
+        }
+     return "no";
+    }
+    
     public boolean correct_dateFormat(String dateText){//Función que verifica el formato de la fecha
         boolean flag = true;
         if(dateText.length() != 10){
@@ -567,6 +658,40 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
             evt.consume();
         }
     }//GEN-LAST:event_password_txtKeyTyped
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        if(searchUser(search_txt.getText()).equals("no"))
+        {
+            search_txt.setText("No se encontro");
+            
+        }
+        else
+        {
+            String[] Line;
+            Line=searchUser(search_txt.getText()).split("|");
+            
+            user_txt.setText(Line[0]);
+            name_txt.setText(Line[1]);
+            lastname_txt.setText(Line[2]);
+            password_txt.setText(Line[3]);
+            date_txt.setText(Line[4]);
+            mail_txt.setText(Line[5]);
+            phone_txt.setText(Line[6]);
+            fotoPath_txt.setText(Line[7]);
+            if(Integer.parseInt(Line[8].trim())==1)
+            {
+                admin_rdb.setSelected(true);
+                user_rdb.setSelected(false);
+            }
+            else
+            {
+                admin_rdb.setSelected(false);
+                user_rdb.setSelected(true);
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

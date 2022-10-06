@@ -31,6 +31,7 @@ public class Menu extends javax.swing.JFrame {
             rol_lbl.setText("Usuario");
         }
         foto_lbl.setIcon(new ImageIcon(l2.FotoPath));
+        //******
         
         
     }
@@ -107,6 +108,11 @@ public class Menu extends javax.swing.JFrame {
         JBTN_search.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
         JBTN_search.setForeground(new java.awt.Color(255, 255, 255));
         JBTN_search.setText("Buscar usuario");
+        JBTN_search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBTN_searchActionPerformed(evt);
+            }
+        });
 
         JBTN_deleteProfile.setBackground(new java.awt.Color(102, 102, 102));
         JBTN_deleteProfile.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
@@ -199,8 +205,20 @@ public class Menu extends javax.swing.JFrame {
 
     private void JBTN_IngresarUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_IngresarUserActionPerformed
         // TODO add your handling code here:
+         Login l2 = new Login();
+        String[] Line;
+        Line=l2.STR_LINE.split("|");
+        if(Integer.parseInt(Line[8].trim())==0)
+        {
+            l2.setVisible(true);
+            this.setVisible(false);
+        }
+        else
+        {
+            ValAdm=0;
+        }
     }//GEN-LAST:event_JBTN_IngresarUserActionPerformed
-
+public static int ValAdm=0;
     private void JBTN_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_logoutActionPerformed
         // TODO add your handling code here:
          Login l1 = new Login();
@@ -211,6 +229,14 @@ public class Menu extends javax.swing.JFrame {
     private void JBTN_backupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_backupActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_JBTN_backupActionPerformed
+
+    private void JBTN_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_searchActionPerformed
+        // TODO add your handling code here:
+        //Busqueda de usuario
+        
+        
+        
+    }//GEN-LAST:event_JBTN_searchActionPerformed
 
     /**
      * @param args the command line arguments
