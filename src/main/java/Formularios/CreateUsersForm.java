@@ -614,6 +614,8 @@ public class CreateUsersForm extends javax.swing.JFrame {
             String Informacion = String.join("|", usuario,nombre,apellido,password,fecha,correo,path_fotografia,telefono + "",rol + "","1");
             String strError="";
             
+            
+            
             String[][] descBitacoraUser = getDescriptor("C:\\MEIA\\desc_bitacora_usuario.txt");
             if (archivo.length() == 0 && archivo2.length() == 0) {//Se verifica si los archivos están vacíos            
                 descBitacoraUser[1][1] = dtf.format(LocalDateTime.now());
@@ -623,18 +625,54 @@ public class CreateUsersForm extends javax.swing.JFrame {
             int regActivos = Integer.parseInt(descBitacoraUser[6][1].trim());
             int maxRegistros = Integer.parseInt(descBitacoraUser[8][1].trim());
             if (numRegistros < maxRegistros) { //Se ve si la bitácora esta llena
-                LlenarArchivo(bitacoraUsersPath, Informacion, strError);
+                LlenarArchivo(bitacoraUsersPath, Informacion, strError);//Llenar bitacora
                 numRegistros++;
                 regActivos++;
                 String fechaMod = dtf.format(LocalDateTime.now());
                 descBitacoraUser[3][1] = fechaMod;
                 descBitacoraUser[4][1] = usuario;                
                 descBitacoraUser[5][1] = numRegistros + "";
-                descBitacoraUser[6][1] = regActivos + "";               
-            }else{
-                
-            }            
-            llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
+                descBitacoraUser[6][1] = regActivos + "";       
+                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
+            }
+            else //La bitacora está llena
+            {
+                //Paso archivos al usuario
+                LlenarArchivoUsuario("C:\\MEIA\\bitacora_usuario.txt","");
+                numRegistros = numRegistros + Integer.parseInt(descBitacoraUser[5][1].trim());
+                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_usuario.txt");
+                //Limpio mi bitacora
+                File ARB = new File("C:\\MEIA\\bitacora_usuario.txt");
+                FileWriter Escribir2 = new FileWriter(ARB,false);
+                //Lleno el descriptor
+                String fechaMod = dtf.format(LocalDateTime.now());
+                descBitacoraUser[3][1]=fechaMod;
+                descBitacoraUser[5][1]=0+"";
+                descBitacoraUser[6][1]=0+"";
+                descBitacoraUser[7][1]=0+"";
+                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
+                //***********************************************************************
+                descBitacoraUser = getDescriptor("C:\\MEIA\\desc_bitacora_usuario.txt");
+            if (archivo.length() == 0 && archivo2.length() == 0) {//Se verifica si los archivos están vacíos            
+                descBitacoraUser[1][1] = dtf.format(LocalDateTime.now());
+                descBitacoraUser[2][1] = usuario;
+            }
+             numRegistros = Integer.parseInt(descBitacoraUser[5][1].trim());
+             regActivos = Integer.parseInt(descBitacoraUser[6][1].trim());
+             maxRegistros = Integer.parseInt(descBitacoraUser[8][1].trim());
+            if (numRegistros < maxRegistros) { //Se ve si la bitácora esta llena
+                LlenarArchivo(bitacoraUsersPath, Informacion, strError);//Llenar bitacora
+                numRegistros++;
+                regActivos++;
+                 fechaMod = dtf.format(LocalDateTime.now());
+                descBitacoraUser[3][1] = fechaMod;
+                descBitacoraUser[4][1] = usuario;                
+                descBitacoraUser[5][1] = numRegistros + "";
+                descBitacoraUser[6][1] = regActivos + "";       
+                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
+            }
+            } 
+            
             Login l1 =new Login();
             l1.setVisible(true);
             this.setVisible(false);
@@ -650,7 +688,48 @@ public class CreateUsersForm extends javax.swing.JFrame {
         
     }//GEN-LAST:event_add_btnActionPerformed
 
-    
+     public boolean LlenarArchivoUsuario(String strPath, String strError)
+    {
+        File Archivo = new File(strPath);
+        FileReader LecturaArchivo;
+        try
+        {
+            LecturaArchivo = new FileReader(Archivo);
+            BufferedReader LeerAR=new BufferedReader(LecturaArchivo);
+            String Linea;
+            
+             try {
+                    Linea=LeerAR.readLine();
+ 
+                    int indice=0;
+                    while(Linea != null)
+                    {
+                        if(!"".equals(Linea))
+                        {
+                           LlenarArchivo("C:\\MEIA\\usuario.txt",Linea,"");
+                            
+                           indice++;
+                        }
+                        Linea=LeerAR.readLine();
+                    }
+
+                    LecturaArchivo.close();
+                    LeerAR.close();
+                      
+                } catch (IOException ex) {
+                    
+                }
+            
+           
+                return true;
+        }
+        catch(IOException ex)
+        {
+            strError= ex.getMessage();
+            return false;
+        } 
+        
+    }
    
     
     public boolean LlenarArchivo(String strPath,String strContenido,String strError)
