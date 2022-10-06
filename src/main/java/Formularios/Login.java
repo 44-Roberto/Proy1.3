@@ -229,9 +229,10 @@ public class Login extends javax.swing.JFrame {
                 BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo);
                 //String Linea="";
                 
-                String Linea;
-                String[] User;
+                
                 try {
+                    String Linea;
+                String[] User;
                     Linea=LeerArchivo.readLine();
                     
                     
@@ -249,6 +250,7 @@ public class Login extends javax.swing.JFrame {
                                 {
                                     if(jPFctn.getText().equals(CTN))
                                     {
+                                        STR_LINE=Linea;
                                       CAux=1;
                                       break;
                                     }              
@@ -262,18 +264,21 @@ public class Login extends javax.swing.JFrame {
                                         
                     LecturaArchivo = new FileReader(archivoBitUsuario);
                     LeerArchivo = new BufferedReader(LecturaArchivo);
-                    Linea = LeerArchivo.readLine();
+                    String Linea2;
+                String[] User2;
+                    Linea2 = LeerArchivo.readLine();
                     while(Linea != null){
-                        if (!"".equals(Linea)) {
-                            User=Linea.split("|");
-                            Usuario=User[0];
-                            CTN=User[3];
-                            FotoPath=User[7];
-                            rol = Integer.parseInt(User[8]);
+                        if (!"".equals(Linea2)) {
+                            User2=Linea2.split("|");
+                            Usuario=User2[0];
+                            CTN=User2[3];
+                            FotoPath=User2[7];
+                            rol = Integer.parseInt(User2[8]);
                             
                             if (JTFUser.getText().equals(Usuario)) {
                                 if(jPFctn.getText().equals(CTN))
                                 {
+                                     STR_LINE=Linea2;
                                     CAux=1;
                                     break;
                                 }
@@ -325,6 +330,7 @@ public class Login extends javax.swing.JFrame {
 
     }//GEN-LAST:event_JBCrearActionPerformed
   public static String usertx="";
+  public static String STR_LINE="";
   public static String FotoPath="";
   public static int rol = 0;
     private void jPFctnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPFctnActionPerformed
@@ -338,11 +344,12 @@ public class Login extends javax.swing.JFrame {
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
         // TODO add your handling code here:
         //Salida S1= new Salida();
+        ValAdm2=2;
            CreateUsersForm s1 = new CreateUsersForm();
         s1.setVisible(true);
         dispose();
     }//GEN-LAST:event_jLabel3MouseClicked
-
+public static int ValAdm2=0;
     private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
         // TODO add your handling code here:
         jLabel3.setForeground(Color.red);

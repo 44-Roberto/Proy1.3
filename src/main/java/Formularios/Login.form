@@ -214,11 +214,6 @@
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="logo_lbl">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\MEIA\fotografia\spotify.png"/>
-            </Property>
-          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
