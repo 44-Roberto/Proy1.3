@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.awt.Color;
 import java.awt.Image;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 
@@ -20,8 +22,7 @@ import javax.swing.ImageIcon;
  * @author AndresLima
  */
 public class CreateUsersForm extends javax.swing.JFrame {
-
-    List<String> auxiliar;
+    
     File file;
     File archivo = new File("C:\\MEIA\\usuario.txt");
     File archivo2 = new File("C:\\MEIA\\bitacora_usuario.txt");
@@ -706,6 +707,7 @@ public class CreateUsersForm extends javax.swing.JFrame {
 
      public boolean LlenarArchivoUsuario(String strPath, String strError)
     {
+        ArrayList<String> auxiliar = new ArrayList<String>();
         File Archivo = new File(strPath);
         FileReader LecturaArchivo;
         try
@@ -715,20 +717,22 @@ public class CreateUsersForm extends javax.swing.JFrame {
             String Linea;
             
              try {
-                    Linea=LeerAR.readLine();
- 
+                    Linea=LeerAR.readLine();                    
                     int indice=0;
                     while(Linea != null)
                     {
                         if(!"".equals(Linea))
                         {
-                           LlenarArchivo("C:\\MEIA\\usuario.txt",Linea,"");
-                            
+                           auxiliar.add(Linea);                                                       
                            indice++;
                         }
                         Linea=LeerAR.readLine();
                     }
 
+                    Collections.sort(auxiliar);
+                    for(var str : auxiliar){
+                        LlenarArchivo("C:\\MEIA\\usuario.txt",str,"");
+                    }
                     LecturaArchivo.close();
                     LeerAR.close();
                       

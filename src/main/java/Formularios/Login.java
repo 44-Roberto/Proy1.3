@@ -240,7 +240,7 @@ public class Login extends javax.swing.JFrame {
                     {
                         if(!"".equals(Linea))
                         {
-                           User=Linea.split("|");
+                           User=Linea.split("[|]");
                             
                            Usuario=User[0];
                            CTN=User[3];
@@ -265,11 +265,11 @@ public class Login extends javax.swing.JFrame {
                     LecturaArchivo = new FileReader(archivoBitUsuario);
                     LeerArchivo = new BufferedReader(LecturaArchivo);
                     String Linea2;
-                String[] User2;
+                    String[] User2;
                     Linea2 = LeerArchivo.readLine();
-                    while(Linea != null){
+                    while(Linea2 != null){
                         if (!"".equals(Linea2)) {
-                            User2=Linea2.split("|");
+                            User2 = Linea2.split("[|]");
                             Usuario=User2[0];
                             CTN=User2[3];
                             FotoPath=User2[7];

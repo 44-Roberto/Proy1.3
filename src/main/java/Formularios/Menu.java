@@ -29,6 +29,9 @@ public class Menu extends javax.swing.JFrame {
             JBTN_deleteProfile.setEnabled(false);
         }else{
             rol_lbl.setText("Usuario");
+            JBTN_IngresarUser.setEnabled(false);
+            JBTN_backup.setEnabled(false);
+            JBTN_search.setEnabled(false);
         }
         foto_lbl.setIcon(new ImageIcon(l2.FotoPath));
         //******
@@ -205,18 +208,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void JBTN_IngresarUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_IngresarUserActionPerformed
         // TODO add your handling code here:
-         Login l2 = new Login();
-        String[] Line;
-        Line=l2.STR_LINE.split("|");
-        if(Integer.parseInt(Line[8].trim())==0)
-        {
-            l2.setVisible(true);
-            this.setVisible(false);
-        }
-        else
-        {
-            ValAdm=0;
-        }
+        
     }//GEN-LAST:event_JBTN_IngresarUserActionPerformed
 public static int ValAdm=0;
     private void JBTN_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_logoutActionPerformed
