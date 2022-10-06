@@ -92,6 +92,11 @@ public class Menu extends javax.swing.JFrame {
         JBTN_modify.setFont(new java.awt.Font("Segoe UI Black", 0, 12)); // NOI18N
         JBTN_modify.setForeground(new java.awt.Color(255, 255, 255));
         JBTN_modify.setText("Modificar datos");
+        JBTN_modify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBTN_modifyActionPerformed(evt);
+            }
+        });
 
         foto_lbl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -211,6 +216,7 @@ public class Menu extends javax.swing.JFrame {
         
     }//GEN-LAST:event_JBTN_IngresarUserActionPerformed
 public static int ValAdm=0;
+public static int ValMod=0;
     private void JBTN_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_logoutActionPerformed
         // TODO add your handling code here:
          Login l1 = new Login();
@@ -226,9 +232,20 @@ public static int ValAdm=0;
         // TODO add your handling code here:
         //Busqueda de usuario
         
+        ValMod=1;//1 es que vino para buscar
+        OperationsForm of1 = new OperationsForm();
+        of1.setVisible(true);
+        
         
         
     }//GEN-LAST:event_JBTN_searchActionPerformed
+
+    private void JBTN_modifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTN_modifyActionPerformed
+        // TODO add your handling code here:
+        ValMod=2;//1 es que vino para buscar
+        OperationsForm of1 = new OperationsForm();
+        of1.setVisible(true);
+    }//GEN-LAST:event_JBTN_modifyActionPerformed
 
     /**
      * @param args the command line arguments
