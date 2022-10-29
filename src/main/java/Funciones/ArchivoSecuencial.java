@@ -52,12 +52,13 @@ public class ArchivoSecuencial {
         return "null";
     }
     
-    public void Add(String[] registro, String Path){        
-        if (!Search(registro[0], Path).equals("null")) {
-            //Si la llave primaria ya esta en el archivo se retorna
+    public void Add(String[] registro, String pathBit, String pathMaster){        
+        if (!Search(registro[0], pathBit).equals("null") || !Search(registro[0], pathMaster).equals("null")) {
+            //Si la llave primaria ya esta en la bitácora o en el maestro se retorna
             return;
         }
-        
+        //Verificar descriptor
+        //Insertar y modificar en el descriptor
     }
     
     public String[][] getDescriptor(String ruta){
