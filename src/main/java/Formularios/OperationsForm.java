@@ -516,9 +516,8 @@ public boolean emptyFields(){//Verifica que los campos ingresados no esten vací
     public String searchUser(String Name)
     {
         
-        String Usuario="";
-        String CTN="";
-         File archivoUsuario = new File("C:\\MEIA\\usuario.txt");
+        String Usuario="";        
+        File archivoUsuario = new File("C:\\MEIA\\usuario.txt");
         File archivoBitUsuario = new File("C:\\MEIA\\bitacora_usuario.txt");
         if(archivoUsuario.exists()==true)
         {

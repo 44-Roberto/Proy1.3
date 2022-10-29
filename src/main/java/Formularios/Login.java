@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.io.*;
 import javax.swing.JOptionPane;
 import Funciones.AESencripter;
+import Funciones.ArchivoSecuencial;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -216,137 +217,40 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Se deben llenar todos los campos ", "Ingreso no válido", WIDTH);
         }
         String contra= new String(jPFctn.getPassword());
-        AESencripter encripter = new AESencripter();
-        int CTNLong =0;
-        int CAux=0;
-        String Usuario="";
-        String CTN="";
-        int[] split=new int[8];
-        int[] RangoINF=new int[4];
-        int[] RangoSUP=new int[4];
-        CTNLong=contra.length();
-
-        File archivoUsuario = new File("C:\\MEIA\\usuario.txt");
-        File archivoBitUsuario = new File("C:\\MEIA\\bitacora_usuario.txt");
-        if(archivoUsuario.exists()==true)
-        {
-            //String[] User;
-            FileReader LecturaArchivo;
-            
-            try {
-                LecturaArchivo = new FileReader(archivoUsuario);
-                BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo);
-                //String Linea="";
-                
-                
-                try {
-                    String Linea;
-                String[] User;
-                    Linea=LeerArchivo.readLine();
-                    
-                    
-                    while(Linea != null)
-                    {
-                        if(!"".equals(Linea))
-                        {
-                           User=Linea.split("[|]");
-                            
-                           Usuario=User[0];     
-                           String contCifrada = User[3];
-                            try {
-                                CTN = encripter.desencriptar(contCifrada, Usuario);
-                            } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ex) {
-                                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                           FotoPath=User[7];
-                           rol = Integer.parseInt(User[8]);
-                           if(JTFUser.getText().equals(Usuario))
-                                {
-                                    if(jPFctn.getText().equals(CTN))
-                                    {
-                                        STR_LINE=Linea;
-                                      CAux=1;
-                                      break;
-                                    }              
-                                }
-                        }
-                        Linea=LeerArchivo.readLine();
-                    }
-
-                    LecturaArchivo.close();
-                    LeerArchivo.close();
-                                        
-                    LecturaArchivo = new FileReader(archivoBitUsuario);
-                    LeerArchivo = new BufferedReader(LecturaArchivo);
-                    String Linea2;
-                    String[] User2;
-                    Linea2 = LeerArchivo.readLine();
-                    while(Linea2 != null){
-                        if (!"".equals(Linea2)) {
-                            User2 = Linea2.split("[|]");
-                            Usuario=User2[0];
-                            String contCifrada = User2[3];
-                            try {
-                                CTN = encripter.desencriptar(contCifrada, Usuario);
-                            } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ex) {
-                                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            FotoPath=User2[7];
-                            rol = Integer.parseInt(User2[8]);
-                            
-                            if (JTFUser.getText().equals(Usuario)) {
-                                if(jPFctn.getText().equals(CTN))
-                                {
-                                     STR_LINE=Linea2;
-                                    CAux=1;
-                                    break;
-                                }
-                            }
-                        }
-                        Linea=LeerArchivo.readLine();
-                    }
-                    
-                    LecturaArchivo.close();
-                    LeerArchivo.close();
-                      
-                } catch (IOException ex) {
-                    
-                }
-            } catch (FileNotFoundException ex) {
-                
-            }            
-        }
-        else
-        {
-            
+        AESencripter encripter = new AESencripter();        
+        int CAux=0;        
+        String CTN="";        
+        ArchivoSecuencial as = new ArchivoSecuencial();
+        String resultado = as.Search(JTFUser.getText(), "C:\\MEIA\\bitacora_usuario.txt"); //Se busca primero en la bitácora
+        if (resultado.equals("null")) { //Si no se encontro, se busca en el archivo de usuario
+            resultado = as.Search(JTFUser.getText(), "C:\\MEIA\\usuario.txt");
         }
         
+        if (!resultado.equals("null")) {
+            String[] registro = resultado.split("[|]");        
+            String contCifrada = registro[3];
+            FotoPath=registro[6];
+            rol = Integer.parseInt(registro[8]);        
         
-        if(CAux==1)
-        {
-            CAux=0;
-             usertx=Usuario;
-               Menu m1 = new Menu();
+            try{
+                CTN = encripter.desencriptar(contCifrada, registro[0]);
+            } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+            if (CTN.equals(jPFctn.getText())) {
+                STR_LINE=resultado;
+                CAux=1;                
+            }
+            if(CAux==1)
+            {
+                CAux=0;
+                usertx=registro[0];
+                Menu m1 = new Menu();
                 m1.setVisible(true);
                 this.setVisible(false);
-        }
-//        if(JTFUser.getText().equals(Usuario))
-//        {
-//            if(jPFctn.getText().equals(CTN))
-//            {
-//              usertx=Usuario;
-//                Menu m1 = new Menu();
-//                m1.setVisible(true);
-//                  this.setVisible(false);
-//            }
-//                
-//              
-//        }
-        //Salida S1= new Salida();
-
-        //S1.setVisible(true);
-       // dispose();
-
+            }
+        }                                             
     }//GEN-LAST:event_JBCrearActionPerformed
   public static String usertx="";
   public static String STR_LINE="";
