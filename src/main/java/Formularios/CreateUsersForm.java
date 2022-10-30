@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import Funciones.AESencripter;
+import Funciones.ArchivoSecuencial;
 
 /**
  *
@@ -629,70 +630,16 @@ public class CreateUsersForm extends javax.swing.JFrame {
             
             //Comienza la escritura de datos en bitacora
             String bitacoraUsersPath="C:\\MEIA\\bitacora_usuario.txt"; //Dirección
+            String userPath = "C:\\MEIA\\usuario.txt";
+            String bitacoraDesc = "C:\\MEIA\\desc_bitacora_usuario.txt";
+            String userDec = "C:\\MEIA\\desc_usuario.txt";
             AESencripter encriptador = new AESencripter();
             String contraseñaCifrada = encriptador.encriptar(password, usuario);
             String Informacion = String.join("|", usuario,nombre,apellido,contraseñaCifrada,fecha,correo,path_fotografia,telefono + "",rol + "","1");
             String strError="";
             
-            
-            
-            String[][] descBitacoraUser = getDescriptor("C:\\MEIA\\desc_bitacora_usuario.txt");
-            if (archivo.length() == 0 && archivo2.length() == 0) {//Se verifica si los archivos están vacíos            
-                descBitacoraUser[1][1] = dtf.format(LocalDateTime.now());
-                descBitacoraUser[2][1] = usuario;
-            }
-            int numRegistros = Integer.parseInt(descBitacoraUser[5][1].trim());
-            int regActivos = Integer.parseInt(descBitacoraUser[6][1].trim());
-            int maxRegistros = Integer.parseInt(descBitacoraUser[8][1].trim());
-            if (numRegistros < maxRegistros) { //Se ve si la bitácora esta llena
-                LlenarArchivo(bitacoraUsersPath, Informacion, strError);//Llenar bitacora
-                numRegistros++;
-                regActivos++;
-                String fechaMod = dtf.format(LocalDateTime.now());
-                descBitacoraUser[3][1] = fechaMod;
-                descBitacoraUser[4][1] = usuario;                
-                descBitacoraUser[5][1] = numRegistros + "";
-                descBitacoraUser[6][1] = regActivos + "";       
-                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
-            }
-            else //La bitacora está llena
-            {
-                //Paso archivos al usuario
-                LlenarArchivoUsuario("C:\\MEIA\\bitacora_usuario.txt","");
-                numRegistros = numRegistros + Integer.parseInt(descBitacoraUser[5][1].trim());
-                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_usuario.txt");
-                //Limpio mi bitacora
-                File ARB = new File("C:\\MEIA\\bitacora_usuario.txt");
-                FileWriter Escribir2 = new FileWriter(ARB,false);
-                //Lleno el descriptor
-                String fechaMod = dtf.format(LocalDateTime.now());
-                descBitacoraUser[3][1]=fechaMod;
-                descBitacoraUser[5][1]=0+"";
-                descBitacoraUser[6][1]=0+"";
-                descBitacoraUser[7][1]=0+"";
-                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
-                //***********************************************************************
-                descBitacoraUser = getDescriptor("C:\\MEIA\\desc_bitacora_usuario.txt");
-            if (archivo.length() == 0 && archivo2.length() == 0) {//Se verifica si los archivos están vacíos            
-                descBitacoraUser[1][1] = dtf.format(LocalDateTime.now());
-                descBitacoraUser[2][1] = usuario;
-            }
-             numRegistros = Integer.parseInt(descBitacoraUser[5][1].trim());
-             regActivos = Integer.parseInt(descBitacoraUser[6][1].trim());
-             maxRegistros = Integer.parseInt(descBitacoraUser[8][1].trim());
-            if (numRegistros < maxRegistros) { //Se ve si la bitácora esta llena
-                LlenarArchivo(bitacoraUsersPath, Informacion, strError);//Llenar bitacora
-                numRegistros++;
-                regActivos++;
-                 fechaMod = dtf.format(LocalDateTime.now());
-                descBitacoraUser[3][1] = fechaMod;
-                descBitacoraUser[4][1] = usuario;                
-                descBitacoraUser[5][1] = numRegistros + "";
-                descBitacoraUser[6][1] = regActivos + "";       
-                llenarDescriptor(descBitacoraUser, "C:\\MEIA\\desc_bitacora_usuario.txt");
-            }
-            } 
-            
+            ArchivoSecuencial as = new ArchivoSecuencial();            
+            as.Add(Informacion, bitacoraUsersPath, userPath, bitacoraDesc, userDec, usuario);
             Login l1 =new Login();
             l1.setVisible(true);
             this.setVisible(false);
@@ -707,127 +654,7 @@ public class CreateUsersForm extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_add_btnActionPerformed
-
-     public boolean LlenarArchivoUsuario(String strPath, String strError)
-    {
-        ArrayList<String> auxiliar = new ArrayList<String>();
-        File Archivo = new File(strPath);
-        FileReader LecturaArchivo;
-        try
-        {
-            LecturaArchivo = new FileReader(Archivo);
-            BufferedReader LeerAR=new BufferedReader(LecturaArchivo);
-            String Linea;
-            
-             try {
-                    Linea=LeerAR.readLine();                    
-                    int indice=0;
-                    while(Linea != null)
-                    {
-                        if(!"".equals(Linea))
-                        {
-                           auxiliar.add(Linea);                                                       
-                           indice++;
-                        }
-                        Linea=LeerAR.readLine();
-                    }
-
-                    Collections.sort(auxiliar);
-                    for(var str : auxiliar){
-                        LlenarArchivo("C:\\MEIA\\usuario.txt",str,"");
-                    }
-                    LecturaArchivo.close();
-                    LeerAR.close();
-                      
-                } catch (IOException ex) {
-                    
-                }
-            
-           
-                return true;
-        }
-        catch(IOException ex)
-        {
-            strError= ex.getMessage();
-            return false;
-        } 
-        
-    }
-   
-    
-    public boolean LlenarArchivo(String strPath,String strContenido,String strError)
-    {
-        File Archivo = new File(strPath);
-
-        try
-        {//FileWriter Escribir = new FileWriter(Archivo,false);
-            try (FileWriter Escribir = new FileWriter(Archivo,true); 
-                 BufferedWriter bw = new BufferedWriter(Escribir)) {
-                bw.write(strContenido+ System.getProperty( "line.separator" ));
-                bw.close();
-            }
-                
-                return true;
-        }
-        catch(IOException ex)
-        {
-            strError= ex.getMessage();
-            return false;
-        } 
-        
-    }
-    
-    public String[][] getDescriptor(String ruta){
-        String[][] fileInfo = new String[9][2];
-        File archivo = new File(ruta);
-        if (archivo.exists() == true) {
-            try{
-                LecturaArchivo = new FileReader(archivo);
-                LeerArchivo = new BufferedReader(LecturaArchivo);
-                for (int i = 0; i < 9; i++) {
-                    String[] line = LeerArchivo.readLine().split(":");
-                    fileInfo[i][0] = line[0];
-                    fileInfo[i][1] = line[1];
-                }
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", WIDTH);
-            }
-        }
-        return fileInfo;
-    }
-    
-    public void llenarDescriptor(String[][] descriptor, String Path){
-        String error = "";
-
-        try
-        {     
-             File Archivo = new File(Path);
-            FileWriter Escribir = new FileWriter(Archivo);
-            for (int i = 0; i < 9; i++) {
-                
-                Escribir.write(descriptor[i][0]+":"+descriptor[i][1]+System.getProperty("line.separator" ));
-               
-            }
-                 Escribir.close();
-                
-                //return true;
-        }
-        catch(IOException ex)
-        {
-            error= ex.getMessage();
-            //return false;
-        } 
-        
-    }
-    
-    public void UpdateBitacora(String[][] descBitacoraUsers, String Path){        
-        String error = "";
-        for (int i = 0; i < 10; i++) {
-            String line = String.join(":", descBitacoraUsers[i][0], descBitacoraUsers[i][1]);
-            LlenarArchivo(Path, line, error);
-        }
-    }
-    
+         
     public byte[] openFile(File file_){
         byte[] image_ = new byte[1024*100];
         try{
