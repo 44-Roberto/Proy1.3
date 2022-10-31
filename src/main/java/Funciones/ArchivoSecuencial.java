@@ -29,12 +29,12 @@ public class ArchivoSecuencial {
                 Linea=LeerArchivo.readLine();
                 String[] registro;
                 while(Linea != null){
-                    if (!"".equals(Linea)) {
-                        registro = Linea.split("[|]");
-                        if (Integer.parseInt(registro[9]) != 1) {
+                    if (!"".equals(Linea)) {                        
+                        if (!Linea.endsWith("1")) {
                             //Si el registro esta deshabilitado se regresa un null
                             return "null";
                         }
+                        registro = Linea.split("[|]");
                         String key = registro[0];
                         if (id.equals(key)) {
                             LecturaArchivo.close();
