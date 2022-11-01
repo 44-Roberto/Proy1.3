@@ -105,9 +105,9 @@ public class ProyectoNo1 {
       e.printStackTrace();
     }
             //Verifico bitacora_usuario.txt
-         try {
-      File archivo6 = new File("C:\\MEIA\\desc_bitacora_usuario.txt");
-      if (archivo6.createNewFile()) {
+    try {
+    File archivo6 = new File("C:\\MEIA\\desc_bitacora_usuario.txt");
+    if (archivo6.createNewFile()) {
         System.out.println("Archivo creado: " + archivo6.getName());
         String info = "nombre_simbolico: bitacora_usuario.txt" + System.getProperty( "line.separator" )
                     + "fecha_creacion: " + System.getProperty( "line.separator" )
@@ -122,16 +122,55 @@ public class ProyectoNo1 {
         bw = new BufferedWriter(Escribir);
         bw.write(info);
         bw.close();
-      } else {
+    } else {
         System.out.println("Este archivo ya existe.");
-      }
+    }
     } catch (IOException e) {
-      System.out.println("Error.");
-      e.printStackTrace();
+        System.out.println("Error.");
+        e.printStackTrace();
     }
        
-        
-        
+    try {
+    File indice = new File("C:\\MEIA\\indice.txt");
+    if (indice.createNewFile()) {
+        System.out.println("Archivo creado: " + indice.getName());              
+        } else {
+            System.out.println("Este archivo ya existe.");
+        }
+    } catch (IOException e) {
+        System.out.println("Error.");
+        e.printStackTrace();
+    }            
+    
+    try {
+    File desc_indice = new File("C:\\MEIA\\desc_indice.txt");
+    if (desc_indice.createNewFile()) {
+        System.out.println("Archivo creado: " + desc_indice.getName());
+        String info = "nombre_simbolico: indice.txt" + System.getProperty( "line.separator" )
+                    + "fecha_creacion: " + System.getProperty( "line.separator" )
+                    + "usuario_creacion: " + System.getProperty( "line.separator" )
+                    + "fecha_modificación: " + System.getProperty( "line.separator" )
+                    + "usuario_modificación: " + System.getProperty( "line.separator" )
+                    + "reg_inicial: " + System.getProperty( "line.separator" )
+                    + "#_registros: 0" + System.getProperty( "line.separator" )
+                    + "registros_activos: 0" + System.getProperty( "line.separator" )
+                    + "registros_inactivos: 0" + System.getProperty( "line.separator" )
+                    + "Max. para reorganizar: 3" + System.getProperty( "line.separator" )
+                    + "num_bloques: 0";
+        Escribir = new FileWriter(desc_indice,true);
+        bw = new BufferedWriter(Escribir);
+        bw.write(info);
+        bw.close();
+    } else {
+        System.out.println("Este archivo ya existe.");
+    }
+    } catch (IOException e) {
+        System.out.println("Error.");
+        e.printStackTrace();
+    }
+    
+    
+    
         Login f1 = new Login();
         f1.setVisible(true);
     }
