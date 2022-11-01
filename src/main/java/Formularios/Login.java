@@ -221,10 +221,7 @@ public class Login extends javax.swing.JFrame {
         int CAux=0;        
         String CTN="";        
         ArchivoSecuencial as = new ArchivoSecuencial();
-        String resultado = as.Search(JTFUser.getText(), "C:\\MEIA\\bitacora_usuario.txt"); //Se busca primero en la bitácora
-        if (resultado.equals("null")) { //Si no se encontro, se busca en el archivo de usuario
-            resultado = as.Search(JTFUser.getText(), "C:\\MEIA\\usuario.txt");
-        }
+        String resultado = as.Search(JTFUser.getText(), "C:\\MEIA\\bitacora_usuario.txt","C:\\MEIA\\usuario.txt"); //Se busca primero en la bitácora        
         
         if (!resultado.equals("null")) {
             String[] registro = resultado.split("[|]");        

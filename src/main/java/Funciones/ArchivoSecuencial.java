@@ -19,24 +19,25 @@ import javax.swing.JOptionPane;
  */
 public class ArchivoSecuencial {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    public String Search(String id, String Path){
-        File file = new File(Path);
-        if (file.exists()) {
+    public String Search(String id, String bitacora, String master){
+        File bit = new File(bitacora);
+        File mast = new File(master);
+        FileReader LecturaArchivo;
+        BufferedReader LeerArchivo;
+        if (bit.exists()) {
             try {           
-                FileReader LecturaArchivo = new FileReader(file);
-                BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo);
+                LecturaArchivo = new FileReader(bit);
+                LeerArchivo = new BufferedReader(LecturaArchivo);
                 String Linea;                
                 Linea=LeerArchivo.readLine();
                 String[] registro;
                 while(Linea != null){
-                    if (!"".equals(Linea)) {                        
-                        if (!Linea.endsWith("1")) {
+                    if (!"".equals(Linea)) {                                                                        
+                        if (Linea.contains(id)) {
+                            if (!Linea.endsWith("1")) {
                             //Si el registro esta deshabilitado se regresa un null
-                            return "null";
-                        }
-                        registro = Linea.split("[|]");
-                        String key = registro[0];
-                        if (id.equals(key)) {
+                                return "null";
+                            }
                             LecturaArchivo.close();
                             LeerArchivo.close();
                             return Linea;
@@ -46,6 +47,8 @@ public class ArchivoSecuencial {
                 }
                 LecturaArchivo.close();
                 LeerArchivo.close();
+                
+                
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
                 return "null";
@@ -53,16 +56,51 @@ public class ArchivoSecuencial {
                 Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
                 return "null";
             }
-        }       
+        }   
+        
+        if (mast.exists()) {
+            try {           
+                LecturaArchivo = new FileReader(mast);
+                LeerArchivo = new BufferedReader(LecturaArchivo);
+                String Linea;                
+                Linea=LeerArchivo.readLine();
+                String[] registro;
+                while(Linea != null){
+                    if (!"".equals(Linea)) {                                                                        
+                        if (Linea.contains(id)) {
+                            if (!Linea.endsWith("1")) {
+                            //Si el registro esta deshabilitado se regresa un null
+                                return "null";
+                            }
+                            LecturaArchivo.close();
+                            LeerArchivo.close();
+                            return Linea;
+                        }
+                    }
+                    Linea=LeerArchivo.readLine();
+                }
+                LecturaArchivo.close();
+                LeerArchivo.close();
+                
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
+                return "null";
+            } catch (IOException ex) {
+                Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
+                return "null";
+            }
+        }
         return "null";
     }
     
-    public void Add(String ingreso, String pathBit, String pathMaster, String pathBitDes, String pathMasterDesc, String user){        
-        String[] registro = ingreso.split("[|]");
-        if (!Search(registro[0], pathBit).equals("null") || !Search(registro[0], pathMaster).equals("null")) {
+    public void Add(String key, String ingreso, String pathBit, String pathMaster, String pathBitDes, String pathMasterDesc, String user, boolean repetidos){                
+        if (!repetidos) {
+            if (!Search(key, pathBit, pathMaster).equals("null")) {
             //Si la llave primaria ya esta en la bitácora o en el maestro se retorna
             return;
-        }        
+            }
+        }                
         //Verificar descriptor
         String[][] descriptorBit = getDescriptor(pathBitDes);
         String[][] descriptorMast = getDescriptor(pathMasterDesc);
@@ -95,7 +133,7 @@ public class ArchivoSecuencial {
             setDescriptor(descriptorBit, pathBitDes); //se actualiza el decriptor            
         }else{            
             Reorganizar(pathBit, pathMaster,pathBitDes, pathMasterDesc,user);
-            Add(ingreso,pathBit, pathMaster,pathBitDes, pathMasterDesc,user);
+            Add(key, ingreso, pathBit, pathMaster,pathBitDes, pathMasterDesc,user, repetidos);
         }        
     }
     
@@ -232,5 +270,81 @@ public class ArchivoSecuencial {
         } catch (IOException ex) {
             Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
         }                                
+    }
+    
+    public ArrayList<String> getAll(String id, String pathMaster, String pathBit){
+        ArrayList<String> resultado = new ArrayList<>();
+        File bit = new File(pathBit);
+        File mast = new File(pathMaster);
+        FileReader LecturaArchivo;
+        BufferedReader LeerArchivo;        
+        if (bit.exists()) {
+            try {           
+                LecturaArchivo = new FileReader(bit);
+                LeerArchivo = new BufferedReader(LecturaArchivo);
+                String Linea;                
+                Linea=LeerArchivo.readLine();
+                String[] registro;
+                while(Linea != null){
+                    if (!"".equals(Linea)) {                                                                        
+                        if (Linea.contains(id)) {
+                            if (!Linea.endsWith("1")) {
+                            //Si el registro esta deshabilitado se regresa un null
+                                continue;
+                            }
+                            LecturaArchivo.close();
+                            LeerArchivo.close();
+                            resultado.add(Linea);
+                        }
+                    }
+                    Linea=LeerArchivo.readLine();
+                }
+                LecturaArchivo.close();
+                LeerArchivo.close();
+                
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            } catch (IOException ex) {
+                Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        }   
+        
+        if (mast.exists()) {
+            try {           
+                LecturaArchivo = new FileReader(mast);
+                LeerArchivo = new BufferedReader(LecturaArchivo);
+                String Linea;                
+                Linea=LeerArchivo.readLine();
+                String[] registro;
+                while(Linea != null){
+                    if (!"".equals(Linea)) {                                                                        
+                        if (Linea.contains(id)) {
+                            if (!Linea.endsWith("1")) {
+                            //Si el registro esta deshabilitado se regresa continua
+                                continue;
+                            }
+                            LecturaArchivo.close();
+                            LeerArchivo.close();
+                            resultado.add(Linea);
+                        }
+                    }
+                    Linea=LeerArchivo.readLine();
+                }
+                LecturaArchivo.close();
+                LeerArchivo.close();
+                
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            } catch (IOException ex) {
+                Logger.getLogger(ArchivoSecuencial.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        }
+        return resultado;
     }
 }

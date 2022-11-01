@@ -639,7 +639,7 @@ public class CreateUsersForm extends javax.swing.JFrame {
             String strError="";
             
             ArchivoSecuencial as = new ArchivoSecuencial();            
-            as.Add(Informacion, bitacoraUsersPath, userPath, bitacoraDesc, userDec, usuario);
+            as.Add(usuario, Informacion, bitacoraUsersPath, userPath, bitacoraDesc, userDec, usuario, false);            
             Login l1 =new Login();
             l1.setVisible(true);
             this.setVisible(false);
